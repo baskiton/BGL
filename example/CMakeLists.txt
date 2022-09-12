@@ -12,7 +12,6 @@ link_libraries(
 add_executable(cube cube.c)
 add_executable(gears gears.c)
 add_executable(obj obj.c)
-add_executable(clip clip.c)
 add_executable(scene scene.c)
 
 
@@ -20,6 +19,7 @@ if (BGL_INSTALL)
     install(TARGETS
             cube
             gears
+            scene
 #            EXPORT bgl_targets
             RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 #            ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
