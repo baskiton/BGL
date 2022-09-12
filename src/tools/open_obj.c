@@ -82,7 +82,7 @@ static int parse_face(char *s, oface_t face[3]) {
 BGL_API bgl_obj_t *bgl_load_obj(const char *path) {
     FILE *obj_f = NULL;
     char *buf = NULL;
-    int buf_sz = 512;
+    size_t buf_sz = 512;
     int err = 0;
 
     if (!(obj_f = fopen(path, "r")))

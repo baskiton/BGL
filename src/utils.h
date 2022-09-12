@@ -46,10 +46,10 @@ BGL_INLINE void *bgl_realloc_array(void *ptr, size_t n, size_t size) {
 #endif
 }
 
-BGL_INLINE ssize_t bgl_getline(char **lineptr, int *n, FILE *stream) {
+BGL_INLINE ssize_t bgl_getline(char **lineptr, size_t *n, FILE *stream) {
 #if defined _WIN32 || defined __CYGWIN__
     errno = 0;
-    if (fgets(*lineptr, *n, stream))
+    if (fgets(*lineptr, (int)*n, stream))
         return (ssize_t)strlen(*lineptr);
     return -1;
 #else
