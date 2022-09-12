@@ -186,7 +186,7 @@ BGL_API int bgl_create_index_buffer(bgl_instance bgl, int vbuf_id, const vindex 
     }
 
     bgl_index_buffer buf = malloc(sizeof(*buf));
-    if (!(buf && (buf->indices = aligned_alloc(16, count * sizeof(*indices))))) {
+    if (!(buf && (buf->indices = bgl_aligned_alloc(16, count * sizeof(*indices))))) {
         fprintf(stderr, "Failed to create index buffer: %s\n", strerror(errno));
         return -1;
     }

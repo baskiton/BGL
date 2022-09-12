@@ -23,6 +23,34 @@ mat4 red_model = GLM_MAT4_IDENTITY_INIT;
 mat4 green_model = GLM_MAT4_IDENTITY_INIT;
 mat4 blue_model = GLM_MAT4_IDENTITY_INIT;
 
+static void *gears_aligned_alloc(size_t alignment, size_t size) {
+#if defined _WIN32 || defined __CYGWIN__
+    return _aligned_malloc(size, alignment);
+#else
+    return aligned_alloc(alignment, size);
+#endif
+}
+
+static void gears_aligned_free(void *ptr) {
+#if defined _WIN32 || defined __CYGWIN__
+    _aligned_free(ptr);
+#else
+    free(ptr);
+#endif
+}
+
+static void *gears_realloc_array(void *ptr, size_t n, size_t size) {
+#if defined _WIN32 || defined __CYGWIN__
+    return realloc(ptr, n * size);
+#else
+    # if (__GLIBC_MINOR__ >= 26)
+    return reallocarray(ptr, n, size);
+# else
+    return realloc(ptr, n * size);
+# endif
+#endif
+}
+
 static void vertex_set(vec4 pos, vertex *src, vertex *dst) {
     glm_vec4_copy(pos, src->pos);
     memcpy(dst, src, sizeof(*src));
@@ -43,7 +71,7 @@ static void gear(float inner_radius, float outer_radius, float width, int teeth,
     da = 2.0f * (float)M_PI / (float)teeth / 4.0f;
 
     // draw front face
-    vertex vtmp, *vertices = aligned_alloc(16, (teeth * 4 + 2) * sizeof(*vertices));
+    vertex vtmp, *vertices = gears_aligned_alloc(16, (teeth * 4 + 2) * sizeof(*vertices));
     glm_vec4_copy(color, vtmp.color);
     glm_vec3_copy((vec3){0, 0, 1}, vtmp.normal);
 
@@ -62,7 +90,7 @@ static void gear(float inner_radius, float outer_radius, float width, int teeth,
     bgl_bind_model_matrix(bgl, vbuf, model);
 
     // draw front sides of teeth
-    vertices = reallocarray(vertices, (teeth * 6), sizeof(*vertices));
+    vertices = gears_realloc_array(vertices, (teeth * 6), sizeof(*vertices));
     for (i = j = 0; i < teeth; ++i) {
         angle = (float)i * 2.0f * (float)M_PI / (float)teeth;
 
@@ -80,7 +108,7 @@ static void gear(float inner_radius, float outer_radius, float width, int teeth,
     vtmp.normal[2] = -1.0f;
 
     // draw back face
-    vertices = reallocarray(vertices, (teeth * 4 + 2), sizeof(*vertices));
+    vertices = gears_realloc_array(vertices, (teeth * 4 + 2), sizeof(*vertices));
     for (i = j = 0; i < teeth; ++i) {
         angle = (float)i * 2.0f * (float)M_PI / (float)teeth;
 
@@ -96,7 +124,7 @@ static void gear(float inner_radius, float outer_radius, float width, int teeth,
     bgl_bind_model_matrix(bgl, vbuf, model);
 
     // draw back sides of teeth
-    vertices = reallocarray(vertices, (teeth * 6), sizeof(*vertices));
+    vertices = gears_realloc_array(vertices, (teeth * 6), sizeof(*vertices));
     for (i = j = 0; i < teeth; ++i) {
         angle = (float)i * 2.0f * (float)M_PI / (float)teeth;
 
@@ -112,7 +140,7 @@ static void gear(float inner_radius, float outer_radius, float width, int teeth,
     bgl_bind_model_matrix(bgl, vbuf, model);
 
     // draw outward faces of teeth
-    vertices = reallocarray(vertices, (teeth * 8 + 2), sizeof(*vertices));
+    vertices = gears_realloc_array(vertices, (teeth * 8 + 2), sizeof(*vertices));
     for (i = j = 0; i < teeth; ++i) {
         angle = (float)i * 2.0f * (float)M_PI / (float)teeth;
 
@@ -150,7 +178,7 @@ static void gear(float inner_radius, float outer_radius, float width, int teeth,
     bgl_bind_model_matrix(bgl, vbuf, model);
 
     // draw inside radius cylinder
-    vertices = reallocarray(vertices, (teeth * 2 + 2), sizeof(*vertices));
+    vertices = gears_realloc_array(vertices, (teeth * 2 + 2), sizeof(*vertices));
     for (i = j = 0; i < teeth; ++i) {
         angle = (float)i * 2.0f * (float)M_PI / (float)teeth;
 
@@ -163,7 +191,7 @@ static void gear(float inner_radius, float outer_radius, float width, int teeth,
     vbuf = bgl_create_vertex_buffer(bgl, vertices, j, BGL_TRIANGLES_STRIP);
     bgl_bind_model_matrix(bgl, vbuf, model);
 
-    free(vertices);
+    gears_aligned_free(vertices);
 }
 
 static void init(int width, int height) {
@@ -213,8 +241,10 @@ int main() {
     char title[64];
     const char title_fmt[] = "BGL Gears | FPS: %.01f";
 
-    if (!(bgl = bgl_init()))
+    if (!(bgl = bgl_init())) {
+        fprintf(stderr, "init error\n");
         exit(EXIT_FAILURE);
+    }
 
     if (!bgl_create_window(bgl, width, height, NULL)) {
         fprintf(stderr, "no window\n");

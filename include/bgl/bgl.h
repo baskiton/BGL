@@ -16,12 +16,14 @@
 
 #if defined _WIN32 || defined __CYGWIN__
 # define BGL_API __declspec(dllexport)
+# define BGL_INLINE __forceinline
 #else
 # if __GNUC__ >= 4
 #  define BGL_API __attribute__((visibility("default")))
 # else
 #  define BGL_API
 # endif
+# define BGL_INLINE static inline __attribute((always_inline))
 #endif
 
 

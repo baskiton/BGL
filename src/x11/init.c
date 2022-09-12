@@ -385,4 +385,3 @@ void terminate_platform(bgl_instance bgl) {
         close(x11.empty_evt_pipe[1]);
     }
 }
-

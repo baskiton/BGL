@@ -1,0 +1,13 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
+
+Name: BGL
+Description: Simple Graphics Library
+URL: https://github.com/baskiton/BGL
+Version: @BGL_VERSION@
+Cflags: -I${includedir}
+Libs: -L${libdir} -lbgl -lcglm
+Libs.private: @BGL_PKG_CONFIG_LIBS_PRIVATE@
+Requires.private: @BGL_PKG_CONFIG_REQUIRES_PRIVATE@

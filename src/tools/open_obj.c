@@ -6,10 +6,7 @@
  */
 
 #include <errno.h>
-#include <fcntl.h>
-#include <float.h>
 #include <string.h>
-#include <unistd.h>
 
 #include <bgl/bglt.h>
 
@@ -27,7 +24,7 @@ typedef struct {
 #define BUF_PUSH_BACK(bb, type, data)                                               \
     ({                                                                              \
         if ((bb.cnt >= bb.buf_sz || !bb.buf)                                        \
-                && !(bb.buf = reallocarray(bb.buf, bb.buf_sz <<= 1, sizeof(type)))) \
+                && !(bb.buf = bgl_realloc_array(bb.buf, bb.buf_sz <<= 1, sizeof(type))))    \
             NULL;                                                                   \
         memcpy(&((type *)bb.buf)[bb.cnt++], &data, sizeof(type));                   \
     })
@@ -85,7 +82,7 @@ static int parse_face(char *s, oface_t face[3]) {
 BGL_API bgl_obj_t *bgl_load_obj(const char *path) {
     FILE *obj_f = NULL;
     char *buf = NULL;
-    size_t buf_sz = 512;
+    int buf_sz = 512;
     int err = 0;
 
     if (!(obj_f = fopen(path, "r")))
@@ -109,19 +106,19 @@ BGL_API bgl_obj_t *bgl_load_obj(const char *path) {
 
     errno = 0;
     ssize_t n;
-    while ((n = getline(&buf, &buf_sz, obj_f)) >= 0) {
+    while ((n = bgl_getline(&buf, &buf_sz, obj_f)) >= 0) {
         switch (*buf) {
         case 'o':   // object name
             if (groups.cnt) {
                 if (f.cnt) {
                     cur_grp->i_cnt = f.cnt;
-                    cur_grp->indices = reallocarray(f.buf, f.cnt, sizeof(*cur_grp->indices));
+                    cur_grp->indices = bgl_realloc_array(f.buf, f.cnt, sizeof(*cur_grp->indices));
                     f.buf = NULL;
                     f.cnt = 0;
                 }
             }
             GROUP_INIT
-            cur_grp->name = strndup(&buf[2], n - 3);
+            cur_grp->name = bgl_strndup(&buf[2], n - 3);
             break;
         case 'v':   // vertex data
             switch (buf[1]) {
@@ -179,7 +176,7 @@ BGL_API bgl_obj_t *bgl_load_obj(const char *path) {
     if (groups.cnt) {
         if (f.cnt) {
             cur_grp->i_cnt = f.cnt;
-            cur_grp->indices = reallocarray(f.buf, f.cnt, sizeof(*cur_grp->indices));
+            cur_grp->indices = bgl_realloc_array(f.buf, f.cnt, sizeof(*cur_grp->indices));
             f.buf = NULL;
             f.cnt = 0;
         }
@@ -197,7 +194,7 @@ end:
             err = errno;
         else {
             result->v_cnt = v.cnt;
-            result->vertices = reallocarray(v.buf, v.cnt, sizeof(*result->vertices));
+            result->vertices = bgl_realloc_array(v.buf, v.cnt, sizeof(*result->vertices));
             v.buf = NULL;
 
             result->group_cnt = groups.cnt;

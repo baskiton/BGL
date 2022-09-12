@@ -164,7 +164,7 @@ BGL_API int bgl_create_vertex_buffer(bgl_instance bgl, const vertex *vertices, i
     }
 
     bgl_vertex_buffer buf = malloc(sizeof(*buf));
-    if (!(buf && (buf->vertices = aligned_alloc(16, count * sizeof(*vertices))))) {
+    if (!(buf && (buf->vertices = bgl_aligned_alloc(16, count * sizeof(*vertices))))) {
         fprintf(stderr, "Failed to create vertex buffer: %s\n", strerror(errno));
         return -1;
     }

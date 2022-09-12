@@ -22,6 +22,7 @@
 # define unlikely(x) (x)
 #endif
 
+#include "utils.h"
 
 BGL_DEFINE_HANDLE(bgl_window);
 BGL_DEFINE_STRUCT(bgl_platform);

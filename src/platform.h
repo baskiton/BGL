@@ -22,7 +22,7 @@
 #endif
 
 #if defined(_WIN32) || defined(__APPLE__)
-//# define BGL_LIB_PLATFORM_TIMER
+# define BGL_LIB_PLATFORM_TIMER
 //# define BGL_PLATFORM_TLS
 #else
 #include <time.h>

@@ -9,8 +9,6 @@
 # define _GNU_SOURCE
 #endif
 
-#include <string.h>
-
 #include "internal.h"
 
 
@@ -58,7 +56,7 @@ idx_item *push_back_helper_buf_idx(bgl_instance bgl, int v_off, ivec3 idxs, vec4
     VHB_INIT(bgl, vhb);
 
     if ((ihb->cnt >= ihb->buf_sz || !ihb->buf)
-            && !(ihb->buf = reallocarray(ihb->buf, ihb->buf_sz <<= 1, sizeof(idx_item))))
+            && !(ihb->buf = realloc(ihb->buf, (ihb->buf_sz <<= 1) * sizeof(idx_item))))
         return NULL;
 
     idx_item *ibuf = (idx_item *)ihb->buf + ihb->cnt++;
@@ -76,7 +74,7 @@ static int push_back_helper_buf_vtx(bgl_instance bgl, vec4 v) {
     VHB_INIT(bgl, vhb);
 
     if ((vhb->cnt >= vhb->buf_sz || !vhb->buf)
-            && !(vhb->buf = reallocarray(vhb->buf, vhb->buf_sz <<= 1, sizeof(vertex_item))))
+            && !(vhb->buf = realloc(vhb->buf, (vhb->buf_sz <<= 1) * sizeof(vertex_item))))
         return -1;
 
     vertex_item *vbuf = (vertex_item *)vhb->buf + vhb->cnt;
@@ -136,7 +134,7 @@ void prepare_buffers(bgl_instance bgl, vec4 camera, vec4 light, mat4 vp, vertex_
             sz = 1 << n;
             vhb->buf_sz = sz > vhb->buf_sz ? sz : vhb->buf_sz;
 
-            if (!(vhb->buf = reallocarray(vhb->buf, vhb->buf_sz, sizeof(vertex_item))))
+            if (!(vhb->buf = realloc(vhb->buf, vhb->buf_sz * sizeof(vertex_item))))
                 return;
         }
 
@@ -158,6 +156,12 @@ void prepare_buffers(bgl_instance bgl, vec4 camera, vec4 light, mat4 vp, vertex_
 
     *vhb_buf = vhb->buf;
 }
+
+#ifdef __COMPAR_FN_T
+typedef __compar_fn_t cmp_fn_t;
+#else
+typedef int (*cmp_fn_t)(const void *, const void *);
+#endif
 
 static int cmp_idx(const idx_item *a, const idx_item *b) {
     if (a->avg_z < b->avg_z)
@@ -284,7 +288,7 @@ void draw_buffers(bgl_instance bgl, mat4 vp) {
     vertex_item *vertices;
 
     if ((chb->buf_sz < ihb->buf_sz || !cbuf)
-            && !(cbuf = chb->buf = reallocarray(cbuf, (chb->buf_sz = ihb->buf_sz), sizeof(*cbuf))))
+            && !(cbuf = chb->buf = realloc(cbuf, (chb->buf_sz = ihb->buf_sz) * sizeof(*cbuf))))
         return;
 
     // transform to view then project space
@@ -317,7 +321,7 @@ void draw_buffers(bgl_instance bgl, mat4 vp) {
             clip_tri(bgl, ibuf, clipped, &clip, &clipped_end);
             if (clip != clipped_end) {
                 if (chb->cnt + (clipped_end - clip) >= chb->buf_sz
-                        && !(cbuf = chb->buf = reallocarray(cbuf, chb->buf_sz <<= 1, sizeof(*cbuf))))
+                        && !(cbuf = chb->buf = realloc(cbuf, (chb->buf_sz <<= 1) * sizeof(*cbuf))))
                     return;
 
                 for (; clip < clipped_end; ++clip) {
@@ -334,7 +338,7 @@ void draw_buffers(bgl_instance bgl, mat4 vp) {
         }
     }
 
-    qsort(cbuf, chb->cnt, sizeof(*cbuf), (__compar_fn_t)cmp_idx);
+    qsort(cbuf, chb->cnt, sizeof(*cbuf), (cmp_fn_t)cmp_idx);
 
     // convert to framebuffer coordinates
     for (vertex_item *vxi = vhb->buf; vxi < &((vertex_item *)vhb->buf)[vhb->cnt]; ++vxi)
