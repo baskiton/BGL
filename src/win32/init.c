@@ -144,37 +144,6 @@ static void create_key_tables(bgl_instance bgl) {
 }
 
 int init_platform(bgl_instance bgl) {
-    /*
-    // user32.dll
-    SetProcessDPIAware();
-    ChangeWindowMessageFilterEx();
-    EnableNonClientDpiScaling();
-    SetProcessDpiAwarenessContext();
-    GetDpiForWindow();
-    AdjustWindowRectExForDpi();
-    GetSystemMetricsForDpi();
-
-    // dinput8.dll
-    DirectInput8Create();
-
-    // xinput*.dll
-    XInputGetCapabilities();
-    XInputGetState();
-
-    // dwmapi.dll
-    DwmIsCompositionEnabled();
-    DwmFlush();
-    DwmEnableBlurBehindWindow();
-    DwmGetColorizationColor();
-
-    // shcore.dll
-    SetProcessDpiAwareness();
-    GetDpiForMonitor();
-
-    // ntdll.dll
-    RtlVerifyVersionInfo();
-     // */
-
     create_key_tables(bgl);
 
     // TODO: SetProcessDpi

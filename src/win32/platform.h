@@ -10,14 +10,6 @@
 
 #include <windows.h>
 #include <winuser.h>
-//#include <dinput.h>
-//#include <xinput.h>
-//#include <dbt.h>
-//#include <dwmapi.h>
-//#include <shellscalingapi.h>
-//#include <shellapi.h>
-//#include <ddk/wdm.h>
-//#include <ddk/ntifs.h>
 
 
 struct bgl_platform {
