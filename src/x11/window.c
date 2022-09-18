@@ -262,11 +262,9 @@ static void process_event(bgl_instance bgl, XEvent *evt) {
             if (proto == None)
                 return;
 
-            if (proto == bgl->platform.atoms.WM_DELETE_WINDOW) {
-                bgl->window->should_close = true;
-                if (bgl->window->callbacks.close)
-                    (*bgl->window->callbacks.close)(bgl);
-            } else if (proto == bgl->platform.atoms.NET_WM_PING) {
+            if (proto == bgl->platform.atoms.WM_DELETE_WINDOW)
+                input_window_close_request(bgl);
+            else if (proto == bgl->platform.atoms.NET_WM_PING) {
                 XEvent resp = *evt;
                 resp.xclient.window = bgl->platform.root;
                 XSendEvent(bgl->platform.display,

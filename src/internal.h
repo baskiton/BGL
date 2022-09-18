@@ -192,6 +192,7 @@ struct bgl_instance {
 ///////////////////////////////////////////////////////////////////////////////
 
 void input_key(bgl_instance bgl, bgl_key key, unsigned scancode, bgl_key_action action, bgl_key_mods mods);
+void input_window_close_request(bgl_instance bgl);
 
 void loc_to_dev(mat4 vp, vec4 src, vec3 dst);
 void dev_to_fb(bgl_viewport_internal *viewport, vec3 src, vec3 dst);

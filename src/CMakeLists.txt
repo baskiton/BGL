@@ -43,6 +43,7 @@ if (BGL_BUILD_WIN32)
     target_compile_definitions(bgl PRIVATE _BGL_WIN32)
     target_sources(bgl PRIVATE
             win32/init.c
+            win32/platform.c
             win32/window.c
             win32/render/base.c
     )

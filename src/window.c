@@ -39,7 +39,7 @@ BGL_API int bgl_create_window(bgl_instance bgl, int width, int height, const cha
 
     w_cfg.width = width;
     w_cfg.height = height;
-    w_cfg.title = title;
+    w_cfg.title = title ? : "BGL-Window";
 
     bgl->window->resizable = w_cfg.resizable;
 
@@ -152,4 +152,10 @@ void input_key(bgl_instance bgl, bgl_key key, unsigned scancode, bgl_key_action 
 
     if (bgl->window->callbacks.key)
         (*bgl->window->callbacks.key)(bgl, key, scancode, action, mods);
+}
+
+void input_window_close_request(bgl_instance bgl) {
+    bgl->window->should_close = true;
+    if (bgl->window->callbacks.close)
+        (*bgl->window->callbacks.close)(bgl);
 }
