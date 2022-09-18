@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.8.2)
-project(BGL VERSION 0.0.0.1 LANGUAGES C)
+project(BGL
+        VERSION 0.0.1.8
+        LANGUAGES C
+)
 
 set(CMAKE_C_STANDARD 11)
 
