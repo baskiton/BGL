@@ -15,9 +15,6 @@
 
 #include "internal.h"
 
-#include "platform.h"
-#include "x11/platform.h"
-
 
 static short translate_keysyms(const KeySym *ks, int width) {
     if (width > 1) {

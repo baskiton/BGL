@@ -9,8 +9,6 @@
 
 #include "internal.h"
 
-#include "platform.h"
-
 
 static void create_key_tables(bgl_instance bgl) {
     memset(bgl->platform.keycodes, -1, sizeof(bgl->platform.keycodes));
