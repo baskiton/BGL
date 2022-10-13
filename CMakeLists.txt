@@ -1,6 +1,18 @@
 cmake_minimum_required(VERSION 3.8.2)
+
+execute_process(
+        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+        COMMAND git describe --long
+        OUTPUT_VARIABLE GIT_VERSION
+        ERROR_VARIABLE GIT_VERSION_ERR
+)
+if (GIT_VERSION_ERR)
+    message(FATAL_ERROR "${GIT_VERSION_ERR}")
+endif ()
+string(REGEX REPLACE "\([0-9.]*\)-\([0-9]*\)-.*" "\\1.\\2" GIT_VERSION ${GIT_VERSION})
+
 project(BGL
-        VERSION 0.0.1.8
+        VERSION ${GIT_VERSION}
         LANGUAGES C
 )
 
