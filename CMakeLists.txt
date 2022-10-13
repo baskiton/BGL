@@ -9,7 +9,7 @@ execute_process(
 if (GIT_VERSION_ERR)
     message(FATAL_ERROR "${GIT_VERSION_ERR}")
 endif ()
-string(REGEX REPLACE "\([0-9.]*\)-\([0-9]*\)-.*" "\\1.\\2" GIT_VERSION ${GIT_VERSION})
+string(REGEX REPLACE "v\([0-9.]*\)-\([0-9]*\)-.*" "\\1.\\2" GIT_VERSION ${GIT_VERSION})
 
 project(BGL
         VERSION ${GIT_VERSION}
